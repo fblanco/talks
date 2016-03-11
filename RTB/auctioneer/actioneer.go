@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
+	"log"
 	"net/http"
 	"time"
 
@@ -35,8 +37,12 @@ func auction(w http.ResponseWriter, req *http.Request) {
 	ch := make(chan bid.ProcessedBid, len(bidderList)+1)
 	callBidders(ch, bidderList)
 	bids := collectBids(ch, len(bidderList))
-	pickWinner(bids)
-	fmt.Printf("total et %v\n", time.Since(t))
+	if win := pickWinner(bids); win == nil {
+		io.WriteString(w, "nothing")
+	} else {
+		json.NewEncoder(w).Encode(*win)
+	}
+	log.Printf("total et %v\n", time.Since(t))
 }
 
 func callBidders(ch chan bid.ProcessedBid, bidderList []string) {
@@ -60,7 +66,7 @@ func getBid(url string) *bid.Bid {
 	httpClient := http.Client{Timeout: timeout * 10}
 	resp, err := httpClient.Get(url)
 	if err != nil {
-		fmt.Printf("error %s\n", err)
+		log.Printf("error %s\n", err)
 		return nil
 	}
 
@@ -90,11 +96,11 @@ func collectBids(ch chan bid.ProcessedBid, size int) []bid.ProcessedBid {
 	return bids
 }
 
-func pickWinner(bids []bid.ProcessedBid) {
+func pickWinner(bids []bid.ProcessedBid) *bid.ProcessedBid {
 	max := -10.0
 	wi := -1
 	for i, b := range bids {
-		fmt.Printf("%#v\n", b)
+		log.Printf("checking bid: %#v\n", b)
 		if !b.OK {
 			continue
 		}
@@ -104,8 +110,7 @@ func pickWinner(bids []bid.ProcessedBid) {
 		}
 	}
 	if wi < 0 {
-		fmt.Println("nothing came back")
-	} else {
-		fmt.Printf("the winner is: %#v\n", bids[wi])
+		return nil
 	}
+	return &bids[wi]
 }

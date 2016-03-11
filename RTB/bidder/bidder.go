@@ -21,6 +21,7 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 	myName = flag.String("name", "bidder-x", "bidder name")
 	port = flag.String("port", "8090", "http port number")
+	flag.Parse()
 }
 func main() {
 	http.HandleFunc("/bid", biddr)
