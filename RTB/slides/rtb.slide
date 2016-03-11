@@ -1,0 +1,53 @@
+Go (aka Golang)
+A domain specific example where go shines
+
+fblanco@viantinc.com
+
+* Blurb describing the language
+Go is expressive, concise, clean, and efficient. Its concurrency mechanisms make it easy to write programs that get the most out of multicore and networked machines, while its novel type system enables flexible and modular program construction. Go compiles quickly to machine code yet has the convenience of garbage collection and the power of run-time reflection. It's a fast, statically typed, compiled language that feels like a dynamically typed, interpreted language.
+--[[golang.org]]
+
+* Current release
+[[https://blog.golang.org/go1.6][Go 1.6]]
+
+* Known Companies using Go
+- Google (Youtube, Kubernetes, …)
+- Baidu
+- Twitter
+- Facebook
+- DropBox
+- Docker
+- CoreOS
+- SoundCloud
+- Square
+- Many many more:
+.link https://github.com/golang/go/wiki/GoUsers wiki
+
+* RTB
+
+Let's try building an RTB auctioning system
+Requirements:
+
+- needs to accept an impression request via http
+- needs to auction the impression to n bidders
+- needs to implement a timeout mechanism to avoid long latency caused by some slow bidders
+- pick a winner as soon as all bidders respond or timeout is reached
+- need a bidder to test this
+
+* Let's start hacking a bidder...
+
+* Let's hack the auctioneer...
+
+
+* This is it for the bidder
+The main function, running the http server
+.play ../bidder/bidder.go /^func main/,/^}/
+The handler function
+.code ../bidder/bidder.go /^func biddr/,/^}/
+
+* Some resources
+- [[https://golang.org]]
+- [[https://golangnews.com]]
+- [[https://forum.golangbridge.org]]
+- [[https://groups.google.com/forum/#!forum/golang-nuts]]
+- [[https://www.youtube.com/user/gocoding]]
