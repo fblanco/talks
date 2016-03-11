@@ -3,13 +3,10 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"time"
-
-	_ "net/http/pprof"
 
 	"github.com/fblanco/talks/RTB/bid"
 )
@@ -29,7 +26,7 @@ func init() {
 
 func main() {
 	http.HandleFunc("/ad", auction)
-	fmt.Printf(http.ListenAndServe(":"+*port, nil).Error())
+	log.Printf(http.ListenAndServe(":"+*port, nil).Error())
 }
 
 func auction(w http.ResponseWriter, req *http.Request) {
