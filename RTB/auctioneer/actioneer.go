@@ -77,20 +77,18 @@ func getBid(url string) *bid.Bid {
 }
 
 func collectBids(ch chan bid.ProcessedBid, size int) []bid.ProcessedBid {
-	var bids []bid.ProcessedBid
-	notdone := true
-	c := 0
+	bids := make([]bid.ProcessedBid, 0, size)
 	to := time.After(timeout)
-	for notdone {
+Loop:
+	for {
 		select {
 		case bid := <-ch:
 			bids = append(bids, bid)
-			c++
-			if c == size {
-				notdone = false
+			if len(bids) == size {
+				break Loop
 			}
 		case <-to:
-			notdone = false
+			break Loop
 		}
 	}
 	return bids
