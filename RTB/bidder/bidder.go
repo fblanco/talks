@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"fmt"
+	"log"
 	"math/rand"
 	"net/http"
 	"time"
@@ -25,7 +25,7 @@ func init() {
 }
 func main() {
 	http.HandleFunc("/bid", biddr)
-	fmt.Printf(http.ListenAndServe(":"+*port, nil).Error())
+	log.Printf(http.ListenAndServe(":"+*port, nil).Error())
 }
 
 func biddr(w http.ResponseWriter, req *http.Request) {

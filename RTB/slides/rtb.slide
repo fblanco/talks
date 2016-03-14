@@ -20,6 +20,7 @@ Go is expressive, concise, clean, and efficient. Its concurrency mechanisms make
 - CoreOS
 - SoundCloud
 - Square
+- MediaMath
 - Many many more: [[https://github.com/golang/go/wiki/GoUsers][wiki]]
 
 * RTB
