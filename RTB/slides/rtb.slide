@@ -23,6 +23,9 @@ Go is expressive, concise, clean, and efficient. Its concurrency mechanisms make
 - MediaMath
 - Many many more: [[https://github.com/golang/go/wiki/GoUsers][wiki]]
 
+* Go is picking up momentum really fast
+.image trends.png
+
 * RTB
 Let's try building an RTB auctioning system
 Requirements:
@@ -35,14 +38,27 @@ Requirements:
 
 * Let's start hacking a bidder...
 
-* Let's hack the auctioneer...
-
-
 * This is it for the bidder
 The main function, running the http server
-.play ../bidder/bidder.go /^func main/,/^}/
+.code ../bidder/bidder.go /^func main/,/^}/
 The handler function
 .code ../bidder/bidder.go /^func biddr/,/^}/
+
+* Let's hack the auctioneer...
+
+* This is it for the auctioneer
+The auction http hanlder function
+.code ../auctioneer/auctioneer.go /^func auction/,/^}/
+* The bidders caller function
+.code ../auctioneer/auctioneer.go /^func callBidders/,/^}/
+* The bids collector function
+.code ../auctioneer/auctioneer.go /^func collectBids/,/^}/
+
+* What next?
+- I'd like everyone to start playing with Go
+- I'd like to see Go used in our production environment, across all my team
+- We'll setup some regular talks about it (once a month?), someone will show case their use of Go
+
 
 * Some resources
 - [[https://golang.org]]
