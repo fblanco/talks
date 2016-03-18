@@ -92,16 +92,14 @@ Loop:
 }
 
 func pickWinner(bids []bid.ProcessedBid) *bid.ProcessedBid {
-	max := -10.0
-	wi := -1
+	max, wi := -10.0, -1
 	for i, b := range bids {
 		log.Printf("checking bid: %#v\n", b)
 		if !b.OK {
 			continue
 		}
 		if b.CPM > max {
-			wi = i
-			max = b.CPM
+			max, wi = b.CPM, i
 		}
 	}
 	if wi < 0 {
