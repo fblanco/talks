@@ -3,8 +3,8 @@ Go (aka Golang)
 fblanco@viantinc.com
 
 * History
-Created in 2007 by Robert Griesemer, Rob Pike, and Ken Thompson.
-Go is a programming language designed by Google to help solve Google's problems.
+Created in 2007 by Robert Griesemer, Rob Pike, and Ken Thompson at Google.
+Go is a programming language designed to help solve Google's problems.
 
 Google has BIG problems.
 
@@ -19,7 +19,7 @@ Go is expressive, concise, clean, and efficient. Its concurrency mechanisms make
 --[[golang.org]]
 
 * Known Companies using Go
-- Google (Youtube, Kubernetes, …)
+- Google (Youtube-vitesse, Kubernetes, …)
 - Baidu
 - Twitter
 - Facebook
