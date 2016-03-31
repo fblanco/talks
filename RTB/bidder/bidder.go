@@ -12,14 +12,12 @@ import (
 )
 
 var (
-	myName *string
-	port   *string
+	port = flag.String("port", "8090", "http port number")
 )
 
 func init() {
 	//seed random number generator
 	rand.Seed(time.Now().UnixNano())
-	myName = flag.String("name", "bidder-x", "bidder name")
 	port = flag.String("port", "8090", "http port number")
 	flag.Parse()
 }
@@ -31,5 +29,5 @@ func main() {
 func biddr(w http.ResponseWriter, req *http.Request) {
 	t := time.Now()
 	time.Sleep(time.Duration(rand.Intn(100)) * time.Millisecond)
-	json.NewEncoder(w).Encode(bid.Bid{CPM: rand.Float64() * 10, BidderName: *myName, ElapsedTime: time.Since(t) / time.Millisecond})
+	json.NewEncoder(w).Encode(bid.Bid{CPM: rand.Float64() * 10, BidderName: "bidder-" + *port, ElapsedTime: time.Since(t) / time.Millisecond})
 }

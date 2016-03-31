@@ -1,14 +1,22 @@
 Go (aka Golang)
-A domain specific example where go shines
 
 fblanco@viantinc.com
+
+* History
+Created in 2007 by Robert Griesemer, Rob Pike, and Ken Thompson.
+Go is a programming language designed by Google to help solve Google's problems.
+
+Google has BIG problems.
+
+* History continued
+
+- Go was designed by and for people who write—and read and debug and maintain—large software systems.
+- Go's purpose is not research into programming language design.
+- Go's purpose is to make its designers' programming lives better.
 
 * Blurb describing the language
 Go is expressive, concise, clean, and efficient. Its concurrency mechanisms make it easy to write programs that get the most out of multicore and networked machines, while its novel type system enables flexible and modular program construction. Go compiles quickly to machine code yet has the convenience of garbage collection and the power of run-time reflection. It's a fast, statically typed, compiled language that feels like a dynamically typed, interpreted language.
 --[[golang.org]]
-
-* Current release
-[[https://blog.golang.org/go1.6][Go 1.6]]
 
 * Known Companies using Go
 - Google (Youtube, Kubernetes, …)
@@ -23,8 +31,28 @@ Go is expressive, concise, clean, and efficient. Its concurrency mechanisms make
 - MediaMath
 - Many many more: [[https://github.com/golang/go/wiki/GoUsers][wiki]]
 
+* Why do I like Go
+- Language is very simple, spec is very small compared to other languages.
+- Compiles to native code. Can compile to multiple architectures and OSs from my mac
+- Amazing concurrency primitives
+- Very robust standard library. Pretty much everything we need to build our type of applications
+- Very good tooling
+- Very opinionated
+
+* Language spec comparison
+.image speccomparison.png
+
 * Go is picking up momentum really fast
 .image trends.png
+
+* Current release
+[[https://blog.golang.org/go1.6][Go 1.6]]
+
+* GC Improvements over time
+.image gc_improvements.png
+
+* GC 1.5 vs 1.6
+.image gc_1.5_vs_1.6.png
 
 * RTB
 Let's try building an RTB auctioning system
@@ -66,3 +94,5 @@ The auction http hanlder function
 - [[https://forum.golangbridge.org]]
 - [[https://groups.google.com/forum/#!forum/golang-nuts]]
 - [[https://www.youtube.com/user/gocoding]]
+* Book
+[[http://www.amazon.com/Programming-Language-Addison-Wesley-Professional-Computing/dp/0134190440/ref=sr_1_1?ie=UTF8&qid=1459206891&sr=8-1&keywords=golang][The Go Programming Language]]

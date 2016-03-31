@@ -12,26 +12,20 @@ import (
 )
 
 var (
-	bidderList []string
-	timeout    time.Duration
-	port       *string
+	bidderList = []string{"http://localhost:8085/bid", "http://localhost:8086/bid", "http://localhost:8087/bid", "http://localhost:8088/bid"}
+	timeout    = 50 * time.Millisecond
+	port       = flag.String("port", "8080", "http port number")
 )
 
-func init() {
-	bidderList = []string{"http://localhost:8085/bid", "http://localhost:8086/bid", "http://localhost:8087/bid", "http://localhost:8088/bid"}
-	timeout = 50 * time.Millisecond
-	port = flag.String("port", "8080", "http port number")
-	flag.Parse()
-}
-
 func main() {
+	flag.Parse()
 	http.HandleFunc("/ad", auction)
 	log.Printf(http.ListenAndServe(":"+*port, nil).Error())
 }
 
 func auction(w http.ResponseWriter, req *http.Request) {
 	t := time.Now()
-	ch := make(chan bid.ProcessedBid, len(bidderList)+1)
+	ch := make(chan bid.ProcessedBid, len(bidderList))
 	callBidders(ch, bidderList)
 	bids := collectBids(ch, len(bidderList))
 	if win := pickWinner(bids); win == nil {
@@ -53,7 +47,7 @@ func callBidders(ch chan bid.ProcessedBid, bidderList []string) {
 				ok = false
 				bd = &bid.Bid{BidderName: "n/a"}
 			}
-			pbid := bid.ProcessedBid{ok, time.Since(t) / time.Millisecond, url, *bd}
+			pbid := bid.ProcessedBid{OK: ok, RoundTripElapsedTime: time.Since(t) / time.Millisecond, URL: url, Bid: *bd}
 			ch <- pbid
 		}()
 	}
