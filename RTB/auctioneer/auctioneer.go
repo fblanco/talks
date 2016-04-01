@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/fblanco/talks/RTBHack/bid"
+	"github.com/fblanco/talks/RTB/bid"
 )
 
 var (
