@@ -54,6 +54,8 @@ Go is expressive, concise, clean, and efficient. Its concurrency mechanisms make
 * GC 1.5 vs 1.6
 .image gc_1.5_vs_1.6.png
 
+* Let's write some code
+
 * RTB
 Let's try building an RTB auctioning system
 Requirements:

@@ -2,18 +2,17 @@ package bid
 
 import "time"
 
-//Bid contains the bidder response
+// Bid is a struct containing bid info
 type Bid struct {
-	CPM         float64       `json:"cpm"`
-	BidderName  string        `json:"name"`
-	ElapsedTime time.Duration `json:"et"`
+	BidderName  string `json:"name"`
+	CPM         float64
+	ElapsedTime time.Duration
 }
 
-//ProcessedBid contains the bidder response + total round trip time and original url
+// ProcessedBid is a struct containing bid info + auctioneer info
 type ProcessedBid struct {
-	OK                   bool          `json:"ok"`
-	RoundTripElapsedTime time.Duration `json:"rtet"`
-	URL                  string        `json:"url"`
+	OK            bool
+	RTElapsedTime time.Duration
 
 	Bid
 }
