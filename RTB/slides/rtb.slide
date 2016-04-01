@@ -72,7 +72,7 @@ Requirements:
 The main function, running the http server
 .code ../bidder/bidder.go /^func main/,/^}/
 The handler function
-.code ../bidder/bidder.go /^func biddr/,/^}/
+.code ../bidder/bidder.go /^func bidder/,/^}/
 
 * Let's hack the auctioneer...
 
