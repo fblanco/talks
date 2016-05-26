@@ -13,8 +13,11 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/fblanco/talks/cool/scheduler"
 	"github.com/fblanco/talks/cool/utils"
 )
+
+var aduration utils.AtomicNotifiableDurationChange
 
 func signalsHandler(wg *sync.WaitGroup, timeout time.Duration) {
 	c := make(chan os.Signal, 1)
@@ -61,15 +64,34 @@ var stop utils.AtomicBool
 func init() {
 	flag.Parse()
 	rand.Seed(time.Now().UnixNano())
+	aduration.Set(10 * time.Second)
 }
 
 func main() {
-	log.Println("starting up v1")
+	log.Println("starting up v2")
 	go signalsHandler(&wg, 10*time.Second)
 	http.HandleFunc("/do", checkInOut(logIt(doSomething)))
 	http.HandleFunc("/health", logIt(healthCheck))
 
+	scheduler.Schedule(mischief, &aduration)
+	go changeDuration()
 	log.Printf(http.ListenAndServe(":"+*port, nil).Error())
+
+}
+
+func mischief() {
+	log.Println("firing SIGUSR2 signal to self")
+	syscall.Kill(syscall.Getpid(), syscall.SIGUSR2)
+}
+
+// simulating config change for aduration variable
+func changeDuration() {
+	for {
+		time.Sleep((time.Duration)(rand.Intn(10)) * time.Second)
+		nd := (time.Duration)(rand.Intn(20)+1) * time.Second
+		log.Printf("changed mischief execution schedule to every %v", nd)
+		aduration.Set(nd)
+	}
 }
 
 func checkInOut(f http.HandlerFunc) http.HandlerFunc {
