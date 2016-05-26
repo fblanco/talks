@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/fblanco/talks/RTB/bid"
+	"github.com/fblanco/talks/rtb/bid"
 )
 
 var port = flag.String("port", "9090", "http server port")
