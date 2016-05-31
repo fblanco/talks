@@ -20,7 +20,7 @@ import (
 var aduration utils.AtomicNotifiableDurationChange
 
 func signalsHandler(wg *sync.WaitGroup, timeout time.Duration) {
-	c := make(chan os.Signal, 1)
+	c := make(chan os.Signal)
 	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM, syscall.SIGUSR2)
 
 	// Block until a signal is received.
@@ -56,10 +56,10 @@ func restart() {
 	syscall.Exec(os.Args[0], os.Args, os.Environ())
 }
 
-var port = flag.String("port", "8001", "http server port")
 var wg sync.WaitGroup
-
 var stop utils.AtomicBool
+
+var port = flag.String("port", "8001", "http server port")
 
 func init() {
 	flag.Parse()
@@ -68,7 +68,7 @@ func init() {
 }
 
 func main() {
-	log.Println("starting up v2")
+	log.Println("starting up v4")
 	go signalsHandler(&wg, 10*time.Second)
 	http.HandleFunc("/do", checkInOut(logIt(doSomething)))
 	http.HandleFunc("/health", logIt(healthCheck))
