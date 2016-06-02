@@ -4,16 +4,16 @@ import (
 	"time"
 )
 
-//DurationChangeNotifier is the interface
-type DurationChangeNotifier interface {
+//DurationWatcher is the interface
+type DurationWatcher interface {
 	Duration() time.Duration
-	ChangeChannel() chan time.Duration
+	Watch() chan time.Duration
 }
 
 //Schedule will schedule the execution of the function f, exery Duration(), it will automatically change Duration()
 //if a change is made to the desired Duration time
-func Schedule(f func(), dn DurationChangeNotifier) {
-	c := dn.ChangeChannel()
+func Schedule(f func(), dn DurationWatcher) {
+	c := dn.Watch()
 	go func() {
 		ticker := time.NewTicker(dn.Duration())
 		for {

@@ -17,7 +17,7 @@ import (
 	"github.com/fblanco/talks/cool/utils"
 )
 
-var aduration utils.AtomicNotifiableDurationChange
+var aduration utils.AtomicNotifiableDuration
 
 func signalsHandler(wg *sync.WaitGroup, timeout time.Duration) {
 	c := make(chan os.Signal)

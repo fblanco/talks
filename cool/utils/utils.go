@@ -40,14 +40,15 @@ func (d *AtomicDuration) Get() time.Duration { return (time.Duration)(atomic.Loa
 // Set sets time.Duration
 func (d *AtomicDuration) Set(t time.Duration) { atomic.StoreInt64((*int64)(d), (int64)(t)) }
 
-//AtomicNotifiableDurationChange is a struct wrapping AtomicDuration + notification channel
-type AtomicNotifiableDurationChange struct {
-	d AtomicDuration
-	c chan time.Duration
+//AtomicNotifiableDuration is a struct wrapping AtomicDuration + notification channel it implements a DurationWatcher
+type AtomicNotifiableDuration struct {
+	d    AtomicDuration
+	c    chan time.Duration
+	once sync.Once
 }
 
 //Set sets the value
-func (t *AtomicNotifiableDurationChange) Set(v time.Duration) {
+func (t *AtomicNotifiableDuration) Set(v time.Duration) {
 	ov := t.d.Get()
 	t.d.Set(v)
 	// if value changes send new value thru channel
@@ -57,14 +58,14 @@ func (t *AtomicNotifiableDurationChange) Set(v time.Duration) {
 }
 
 //Duration gets the value to implement DurationChangeNotifier interface
-func (t *AtomicNotifiableDurationChange) Duration() time.Duration {
+func (t *AtomicNotifiableDuration) Duration() time.Duration {
 	return t.d.Get()
 }
 
-//ChangeChannel returns the channel where changes notification will be pushed
-func (t *AtomicNotifiableDurationChange) ChangeChannel() chan time.Duration {
-	if t.c == nil {
-		t.c = make(chan time.Duration, 1)
-	}
+//Watch returns the channel where changes notification will be pushed
+func (t *AtomicNotifiableDuration) Watch() chan time.Duration {
+	t.once.Do(func() {
+		t.c = make(chan time.Duration)
+	})
 	return t.c
 }
