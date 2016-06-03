@@ -130,7 +130,7 @@ func logIt(f http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-func authIt(fn http.HandlerFunc, roles ...int) http.HandlerFunc {
+func authIt(f http.HandlerFunc, roles ...int) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user := r.FormValue("u")
 		role, ok := authUser[user]
@@ -153,6 +153,6 @@ func authIt(fn http.HandlerFunc, roles ...int) http.HandlerFunc {
 
 		ui := userInfo{user, role}
 		ctx := context.WithValue(r.Context(), userInfoKey, ui)
-		fn(w, r.WithContext(ctx))
+		f(w, r.WithContext(ctx))
 	}
 }
