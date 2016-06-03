@@ -1,9 +1,9 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
-	"io"
 	"log"
 	"math/rand"
 	"net/http"
@@ -61,6 +61,15 @@ var stop utils.AtomicBool
 
 var port = flag.String("port", "8001", "http server port")
 
+const userInfoKey = 10
+
+var authUser = map[string]int{"fabrizio": 1, "test": 2}
+
+type userInfo struct {
+	user string
+	role int
+}
+
 func init() {
 	flag.Parse()
 	rand.Seed(time.Now().UnixNano())
@@ -70,8 +79,9 @@ func init() {
 func main() {
 	log.Println("starting up v4")
 	go signalsHandler(&wg, 10*time.Second)
-	http.HandleFunc("/do", checkInOut(logIt(doSomething)))
-	http.HandleFunc("/health", logIt(healthCheck))
+	http.HandleFunc("/do", checkInOut(authIt(logIt(doSomething), 1, 2)))
+	http.HandleFunc("/do1", checkInOut(authIt(logIt(doSomething), 1)))
+	http.HandleFunc("/do2", checkInOut(authIt(logIt(doSomething), 2)))
 
 	scheduler.Schedule(mischief, &aduration)
 	go changeDuration()
@@ -94,6 +104,12 @@ func changeDuration() {
 	}
 }
 
+func doSomething(w http.ResponseWriter, r *http.Request) {
+	st := time.Duration(rand.Intn(20)) * time.Second
+	time.Sleep(st)
+	fmt.Fprintf(w, "took a nap for %v\n", st)
+}
+
 func checkInOut(f http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		wg.Add(1)
@@ -106,21 +122,37 @@ func logIt(f http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		t := time.Now()
 		f(w, r)
-		log.Printf("m:%s, r:%s, ua:%s, et:%v", r.Method, r.RequestURI, r.UserAgent(), time.Since(t))
+		uinfo, ok := r.Context().Value(userInfoKey).(userInfo)
+		if !ok {
+			uinfo = userInfo{"n/a", -1}
+		}
+		log.Printf("user:%s, role:%d, m:%s, r:%s, ua:%s, et:%v", uinfo.user, uinfo.role, r.Method, r.RequestURI, r.UserAgent(), time.Since(t))
 	}
 }
 
-func healthCheck(w http.ResponseWriter, r *http.Request) {
-	if stop.Get() {
-		w.WriteHeader(http.StatusNotFound)
-		return
+func authIt(fn http.HandlerFunc, roles ...int) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		user := r.FormValue("u")
+		role, ok := authUser[user]
+		if !ok {
+			fmt.Fprintf(w, "not Authorized")
+			return
+		}
+		auth := false
+		for _, rl := range roles {
+			if role == rl {
+				auth = true
+				break
+
+			}
+		}
+		if !auth {
+			fmt.Fprintf(w, "not Authorized")
+			return
+		}
+
+		ui := userInfo{user, role}
+		ctx := context.WithValue(r.Context(), userInfoKey, ui)
+		fn(w, r.WithContext(ctx))
 	}
-
-	io.WriteString(w, "ok")
-}
-
-func doSomething(w http.ResponseWriter, r *http.Request) {
-	st := time.Duration(rand.Intn(20)) * time.Second
-	time.Sleep(st)
-	fmt.Fprintf(w, "took a nap for %v\n", st)
 }
