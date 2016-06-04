@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"math/rand"
 	"net/http"
@@ -78,11 +79,12 @@ func init() {
 
 func main() {
 	log.Println("starting up v4")
+
 	go signalsHandler(&wg, 10*time.Second)
 	http.HandleFunc("/do", checkInOut(authIt(logIt(doSomething), 1, 2)))
 	http.HandleFunc("/do1", checkInOut(authIt(logIt(doSomething), 1)))
 	http.HandleFunc("/do2", checkInOut(authIt(logIt(doSomething), 2)))
-
+	http.HandleFunc("/health", logIt(healthCheck))
 	scheduler.Schedule(mischief, &aduration)
 	go changeDuration()
 	log.Printf(http.ListenAndServe(":"+*port, nil).Error())
@@ -110,6 +112,15 @@ func doSomething(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "took a nap for %v\n", st)
 }
 
+func healthCheck(w http.ResponseWriter, r *http.Request) {
+	if stop.Get() {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	io.WriteString(w, "ok")
+}
+
 func checkInOut(f http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		wg.Add(1)
@@ -135,7 +146,7 @@ func authIt(f http.HandlerFunc, roles ...int) http.HandlerFunc {
 		user := r.FormValue("u")
 		role, ok := authUser[user]
 		if !ok {
-			fmt.Fprintf(w, "not Authorized")
+			http.Error(w, "user not found", http.StatusUnauthorized)
 			return
 		}
 		auth := false
@@ -147,7 +158,7 @@ func authIt(f http.HandlerFunc, roles ...int) http.HandlerFunc {
 			}
 		}
 		if !auth {
-			fmt.Fprintf(w, "not Authorized")
+			http.Error(w, "user does not have credential", http.StatusUnauthorized)
 			return
 		}
 
